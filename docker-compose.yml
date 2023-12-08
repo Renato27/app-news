@@ -1,0 +1,80 @@
+version: '3'
+services:
+
+  laravel:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: laravel
+    ports:
+      - "8002:8000"
+    volumes:
+      - ./backend:/laravel-app
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - postgres
+    entrypoint: .docker/entrypoint.sh
+
+  postgres:
+    image: postgres:13
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-laravel}
+      POSTGRES_USER: ${DB_USERNAME:-laravel}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+  react:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: react
+    volumes:
+      - ./frontend:/react-app
+      - '/react-app/node_modules'
+    env_file:
+      - ./frontend/.env
+    ports:
+      - "3000:3000"
+    stdin_open: true
+    depends_on:
+      - laravel
+
+  keycloak:
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile
+    container_name: keycloak
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: admin
+      DB_VENDOR: POSTGRES
+      DB_ADDR: keycloak-db
+      DB_PORT: 5432
+      DB_DATABASE: keycloak
+      DB_USER: keycloak
+      DB_PASSWORD: keycloak
+    ports:
+      - "8080:8080"
+    depends_on:
+      - keycloak-db
+
+  keycloak-db:
+    image: postgres:13
+    container_name: keycloak-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: keycloak
+    volumes:
+      - keycloak-db-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
+  keycloak-db-data:
