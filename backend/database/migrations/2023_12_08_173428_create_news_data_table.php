@@ -15,9 +15,12 @@ class CreateNewsDataTable extends Migration
     {
         Schema::create('news_data', function (Blueprint $table) {
             $table->id();
-            $table->string('published_at');
-            $table->string('source');
-            $table->string('article_title');
+            $table->string('published_at')->nullable();
+            $table->string('source')->nullable();
+            $table->text('article_title')->nullable();
+            $table->text('description')->nullable();
+            $table->string('author')->nullable();
+            $table->text('url')->nullable();
             $table->json('result');
             $table->foreignId('news_category_id')->constrained('news_categories');
             $table->timestamps();

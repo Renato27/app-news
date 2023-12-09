@@ -15,6 +15,9 @@ class NewsData extends Model
         'source',
         'article_title',
         'result',
+        'description',
+        'author',
+        'url',
         'news_category_id',
     ];
 

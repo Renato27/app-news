@@ -2,6 +2,8 @@
 
 namespace App\Console\Commands;
 
+use App\Models\NewsProvider;
+use App\Services\GetNewsDataServiceInterface;
 use Illuminate\Console\Command;
 
 class GetNewsDataCommand extends Command
@@ -37,6 +39,17 @@ class GetNewsDataCommand extends Command
      */
     public function handle()
     {
+        /** @var GetNewsDataServiceInterface $service */
+        $service = app(GetNewsDataServiceInterface::class);
+
+        $providers = NewsProvider::all();
+
+        foreach ($providers as $provider) {
+            $service->setProviderName($provider->name)->setApiKey();
+            $service->handle();
+        }
+
+        $this->info('News data successfully stored in the database');
         return 0;
     }
 }
