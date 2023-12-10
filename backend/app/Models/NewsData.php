@@ -18,11 +18,34 @@ class NewsData extends Model
         'description',
         'author',
         'url',
+        'news_provider_id',
         'news_category_id',
+        'news_author_id',
+        'news_source_id',
     ];
 
     public function newsCategory()
     {
         return $this->belongsTo(NewsCategory::class);
+    }
+
+    public function newsAuthor()
+    {
+        return $this->belongsTo(NewsAuthor::class);
+    }
+
+    public function newsSource()
+    {
+        return $this->belongsTo(NewsSource::class);
+    }
+
+    public function newsProvider()
+    {
+        return $this->belongsTo(NewsProvider::class);
+    }
+
+    public function userSettings()
+    {
+        return $this->belongsToMany(UserSetting::class);
     }
 }

@@ -27,23 +27,33 @@ class GetNewsDataService implements GetNewsDataServiceInterface
         $newsApi = new NewsApi($this->apiKey);
         $categories = $newsApi->getCategories();
 
-        foreach($categories as $category) {
+        foreach ($categories as $category) {
             sleep(2);
-            if(!$category) continue;
+            if (!$category) continue;
 
             $response = $newsApi->getTopHeadLines(null, null, null, $category);
 
-            if($response->status != "ok") continue;
+            if ($response->status != "ok") continue;
 
-            foreach($response->articles as $article) {
-                if(!isset($article->publishedAt) || !isset($article->source)) continue;
+            foreach ($response->articles as $article) {
 
-                $this->saveDatabase($this->providerName, $category, [
-                    "published_at" => $article->publishedAt,
+                $validateFields = $this->validateFields([
+                    $article->source->name,
+                    $article->author
+                ]);
+
+                if (!$validateFields) continue;
+
+                $categories = [
+                    "category" => $category,
                     "source" => $article->source->name ?? null,
+                    "author" => $article->author ?? null
+                ];
+
+                $this->saveDatabase($this->providerName, $categories, [
+                    "published_at" => $article->publishedAt,
                     "article_title" => $article->title,
                     "description" => $article->description,
-                    "author" => $article->author,
                     "url" => $article->url,
                     "result" => json_encode($article)
                 ]);
@@ -55,42 +65,58 @@ class GetNewsDataService implements GetNewsDataServiceInterface
 
     private function nYTimesExecute()
     {
-        $apikeyQuery = "?api-key=" . $this->apiKey;
+        $apikeyQuery = "api-key=" . $this->apiKey;
+        $limit = "limit=12";
+        $sort = "sort=newest";
         $baseUrl = config("news-providers.providers.{$this->providerName}.url");
 
-        $baseUrlSections = $baseUrl . "/section-list.json" . $apikeyQuery;
+        $baseUrlSections = $baseUrl . "/section-list.json?limit=10&" . $apikeyQuery;
 
         $categories = Http::get($baseUrlSections)->json();
 
-        if($categories["status"] != "OK") return false;
+        if ($categories["status"] != "OK") return false;
 
-        foreach($categories["results"] as $category) {
+        $results = array_slice($categories["results"], 0, 10);
+
+        foreach ($results as $category) {
             sleep(2);
-            if(!isset($category["section"])) continue;
+            if (!isset($category["section"])) continue;
+
+            if ($category["section"] == "admin") continue;
 
             $section = $category["section"];
-            $baseUrlArticles = $baseUrl ."/all/{$section}.json" . $apikeyQuery;
+            $baseUrlArticles = $baseUrl . "/all/{$section}.json?{$limit}&{$sort}&{$apikeyQuery}";
 
             $response = Http::get($baseUrlArticles)->json();
 
-            if(!$response) continue;
+            if (!$response) continue;
 
-            if(isset($response["status"]) && $response["status"] != "OK") continue;
+            if (isset($response["status"]) && $response["status"] != "OK") continue;
 
-            if(!isset($response["results"])) continue;
+            if (!isset($response["results"])) continue;
 
-            foreach($response["results"] as $article) {
+            foreach ($response["results"] as $article) {
 
-                if($article["item_type"] != "Article") continue;
+                if ($article["item_type"] != "Article") continue;
 
-                if(!isset($article["published_date"]) || !isset($article["source"])) continue;
+                $validateFields = $this->validateFields([
+                    $article["source"],
+                    $article["byline"]
+                ]);
 
-                $this->saveDatabase($this->providerName, $section, [
-                    "published_at" => $article["published_date"],
+                if (!$validateFields) continue;
+
+                $categories = [
+                    "category" => $section,
                     "source" => $article["source"] ?? null,
+                    "author" => $article["byline"] ?? null
+                ];
+
+                $this->saveDatabase($this->providerName, $categories, [
+                    "published_at" => $article["published_date"],
                     "article_title" => $article["title"],
                     "description" => $article["abstract"],
-                    "author" => $article["byline"],
+
                     "url" => $article["url"],
                     "result" => json_encode($article)
                 ]);
@@ -103,54 +129,67 @@ class GetNewsDataService implements GetNewsDataServiceInterface
     private function guardianExecute()
     {
         $apikeyQuery = "api-key=" . $this->apiKey;
+        $sort = "order-by=newest";
+        $page = "page=1&page-size=12";
         $baseUrl = config("news-providers.providers.{$this->providerName}.url");
 
         $baseUrlSections = $baseUrl . "/sections?" . $apikeyQuery;
 
         $categories = Http::get($baseUrlSections)->json();
 
-        if(!$categories) return false;
+        if (!$categories) return false;
 
         $categories = $categories["response"];
 
-        if($categories["status"] != "ok") return false;
+        if ($categories["status"] != "ok") return false;
 
-        foreach($categories["results"] as $category) {
+        $results = array_slice($categories["results"], 0, 10);
+
+        foreach ($results as $category) {
             sleep(2);
-            if(!isset($category["id"])) continue;
+            if (!isset($category["id"])) continue;
 
-            if($category["id"] == "about") continue;
+            if ($category["id"] == "about") continue;
 
             $section = $category["id"];
             $fields = "byline,publication,thumbnail,trailText";
-            $baseUrlArticles = $baseUrl ."/search?section={$section}&show-fields={$fields}&" . $apikeyQuery;
+            $baseUrlArticles = $baseUrl . "/search?section={$section}&show-fields={$fields}&{$page}&{$sort}&" . $apikeyQuery;
 
             $response = Http::get($baseUrlArticles)->json();
 
-            if(!$response) continue;
+            if (!$response) continue;
 
             $response = $response["response"];
 
-            if(isset($response["status"]) && $response["status"] != "ok") continue;
+            if (isset($response["status"]) && $response["status"] != "ok") continue;
 
-            if(!isset($response["results"])) continue;
+            if (!isset($response["results"])) continue;
 
-            foreach($response["results"] as $article) {
+            foreach ($response["results"] as $article) {
 
-                if($article["type"] != "article") continue;
+                if ($article["type"] != "article") continue;
 
-                if(!isset($article["webPublicationDate"]) || !isset($article["fields"]["publication"])) continue;
+                $validateFields = $this->validateFields([
+                    $article["fields"]["byline"],
+                    $article["fields"]["publication"]
+                ]);
 
-                $author = $article["fields"]["byline"] ?? null;
-                $source = $article["fields"]["publication"] ?? null;
+                if (!$validateFields) continue;
+
+                $author = $article["fields"]["byline"];
+                $source = $article["fields"]["publication"];
                 $description = $article["fields"]["trailText"] ?? null;
 
-                $this->saveDatabase($this->providerName, $section, [
-                    "published_at" => $article["webPublicationDate"],
+                $categories = [
+                    "category" => $section,
                     "source" => $source,
+                    "author" => $author
+                ];
+
+                $this->saveDatabase($this->providerName, $categories, [
+                    "published_at" => $article["webPublicationDate"],
                     "article_title" => $article["webTitle"],
                     "description" => $description,
-                    "author" => $author,
                     "url" => $article["webUrl"],
                     "result" => json_encode($article)
                 ]);
@@ -160,15 +199,42 @@ class GetNewsDataService implements GetNewsDataServiceInterface
         return true;
     }
 
-    private function saveDatabase(string $provider, string $category, array $data)
+    private function saveDatabase(string $provider, array $categories, array $data)
     {
 
         $provider = \App\Models\NewsProvider::where("name", $provider)->first();
-        $category = $provider->categories()->create([
-            "name" => $category
+        $category = $provider->categories()->firstOrCreate([
+            "name" => $categories["category"]
         ]);
 
-        $category->news()->create($data);
+        $source = $provider->sources()->firstOrCreate([
+            "name" => $categories["source"]
+        ]);
+
+        $author = $provider->authors()->firstOrCreate([
+            "name" => $categories["author"]
+        ]);
+
+        $data["news_source_id"] = $source->id;
+        $data["news_author_id"] = $author->id;
+        $data["news_category_id"] = $category->id;
+
+        $json = $data["result"];
+        unset($data["result"]);
+
+        $news = $provider->news()->firstOrCreate($data);
+        $news->result = $json;
+        $news->save();
+    }
+
+    private function validateFields(array $fields): bool
+    {
+        foreach ($fields as $field) {
+            if (!isset($field) || empty($field) || is_null($field)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function handle(): bool

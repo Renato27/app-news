@@ -18,4 +18,24 @@ class NewsProvider extends Model
     {
         return $this->hasMany(NewsCategory::class);
     }
+
+    public function sources()
+    {
+        return $this->hasMany(NewsSource::class);
+    }
+
+    public function authors()
+    {
+        return $this->hasMany(NewsAuthor::class);
+    }
+
+    public function settings()
+    {
+        return $this->hasMany(UserSetting::class);
+    }
+
+    public function news()
+    {
+        return $this->hasMany(NewsData::class);
+    }
 }

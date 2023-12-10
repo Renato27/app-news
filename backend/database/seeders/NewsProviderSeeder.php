@@ -17,13 +17,20 @@ class NewsProviderSeeder extends Seeder
     {
         try {
             DB::beginTransaction();
-                NewsProvider::create([
+                NewsProvider::updateOrCreate([
+                    'name' => 'news_api',
+                ],[
                     'name' => 'news_api',
                 ]);
-                NewsProvider::create([
+                NewsProvider::updateOrCreate([
+                    'name' => 'nytimes',
+                ],[
                     'name' => 'nytimes',
                 ]);
-                NewsProvider::create([
+                NewsProvider::updateOrCreate(
+                [
+                    'name' => 'guardianapis',
+                ],[
                     'name' => 'guardianapis',
                 ]);
             DB::commit();
