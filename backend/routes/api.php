@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::middleware(['keycloak.auth'])->group(function () {
+Route::middleware('keycloak.auth')->group(function () {
     Route::get('/news', [NewsController::class, 'index']);
     Route::get('/news/{newsProvider}', [NewsController::class, 'showByProvider']);
     Route::get('/news/{newsProvider}/category/{newsCategoryId}', [NewsController::class, 'showByCategory']);
