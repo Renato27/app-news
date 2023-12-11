@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\NewsResource;
+use App\Models\NewsData;
 use App\Models\NewsProvider;
 use Illuminate\Http\Request;
 
@@ -10,7 +11,7 @@ class NewsController extends Controller
 {
     public function index()
     {
-        return NewsProvider::all();
+        return NewsData::all();
     }
 
     public function showByProvider(NewsProvider $newsProvider)
@@ -20,23 +21,23 @@ class NewsController extends Controller
         return NewsResource::collection($news);
     }
 
-    public function showByCategory(NewsProvider $newsProvider, $newsCategoryId)
+    public function showByCategory($newsCategoryId)
     {
-        $news = $newsProvider->news()->where('news_category_id', $newsCategoryId)->paginate(4);
+        $news = NewsData::where('news_category_id', $newsCategoryId)->paginate(4);
 
         return NewsResource::collection($news);
     }
 
-    public function showBySource(NewsProvider $newsProvider, $newsSourceId)
+    public function showBySource($newsSourceId)
     {
-        $news = $newsProvider->news()->where('news_source_id', $newsSourceId)->paginate(4);
+        $news = NewsData::where('news_source_id', $newsSourceId)->paginate(4);
 
         return NewsResource::collection($news);
     }
 
-    public function showByAuthor(NewsProvider $newsProvider, $newsAuthorId)
+    public function showByAuthor($newsAuthorId)
     {
-        $news = $newsProvider->news()->where('news_author_id', $newsAuthorId)->paginate(4);
+        $news = NewsData::where('news_author_id', $newsAuthorId)->paginate(4);
 
         return NewsResource::collection($news);
     }
@@ -45,11 +46,12 @@ class NewsController extends Controller
     {
         $user = auth()->user();
         $userSetting = $user->userSetting;
-        $news =  NewsProvider::find($userSetting->news_provider_id)->news()
-            ->where('news_category_id', $userSetting->news_category_id)
-            ->where('news_source_id', $userSetting->news_source_id)
-            ->where('news_author_id', $userSetting->news_author_id)
-            ->paginate(4);
+        $news =  NewsData::where([
+            'news_provider_id' => $userSetting->news_provider_id,
+            'news_category_id' => $userSetting->news_category_id,
+            'news_source_id' => $userSetting->news_source_id,
+            'news_author_id' => $userSetting->news_author_id,
+            ])->paginate(4);
 
         return NewsResource::collection($news);
     }

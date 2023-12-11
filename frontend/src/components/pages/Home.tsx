@@ -1,15 +1,16 @@
 import React from 'react';
 import '../../App.css';
 import HeaderSection from '../HeaderSection';
-import Footer from '../Footer';
-import { NewsItem } from '../../types/types';
+import { ProviderItem } from '../../types/types';
 import CardsHome from '../CardsHome';
+import { useLoaderData } from 'react-router-dom';
 
-function Home({ newsItem }: { newsItem: NewsItem[] }) {
+function Home() {
+  const providerItens = useLoaderData() as ProviderItem[]
   return (
     <>
-      <HeaderSection />
-      <CardsHome newsItem={newsItem}/>
+      <HeaderSection providerImg=''/>
+      <CardsHome providerItens={providerItens}/>
     </>
   )
 }

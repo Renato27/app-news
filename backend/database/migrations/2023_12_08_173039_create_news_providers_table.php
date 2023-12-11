@@ -17,7 +17,7 @@ class CreateNewsProvidersTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('webName');
-            $table->text('base64Logo')->nullable();
+            $table->text('image_url')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

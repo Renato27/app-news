@@ -4,7 +4,7 @@ const VideoComponent = () => {
   const [playVideo, setPlayVideo] = useState<boolean>(() => {
     return localStorage.getItem('playVideo') === 'true' || true;
   });
-  console.log("VideoComponent", playVideo)
+
   useEffect(() => {
     localStorage.setItem('playVideo', String(playVideo));
   }, [playVideo]);

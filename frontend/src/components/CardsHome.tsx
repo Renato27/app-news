@@ -1,10 +1,11 @@
 import React from 'react'
 import CardItem from './CardItem'
 import './CardsHome.css'
-import { NewsItem } from '../types/types';
+import { ProviderItem } from '../types/types';
 
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
-function CardsHome({ newsItem }: { newsItem: NewsItem[] }) {
+function CardsHome({ providerItens }: { providerItens: ProviderItem[] }) {
 
     return (
         <div className='cards'>
@@ -13,9 +14,9 @@ function CardsHome({ newsItem }: { newsItem: NewsItem[] }) {
                 <div className='cards__wrapper'>
                     <ul className='cards__items'>
                         {
-                            newsItem && newsItem.map((newsItem, index) => {
-                                console.log(newsItem)
-                                const image = newsItem?.base64Logo ? newsItem?.base64Logo : "https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg";
+                            providerItens && providerItens.map((newsItem, index) => {
+                                const backendUrlReplaced = backendUrl?.replace('/api', '');
+                                const image = newsItem?.base64Logo ? `${backendUrlReplaced}/${newsItem?.base64Logo}` : "https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg";
                                 return (
                                     <CardItem key={index} src={image} text={newsItem?.webName as string} label={newsItem?.webName as string} path={`/provider/${newsItem.id}`} blank={false}/>
                                 )

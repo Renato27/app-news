@@ -1,4 +1,4 @@
-export type NewsItem = {
+export type ProviderItem = {
 	id: number;
 	name: string;
 	webName: string;

@@ -2,10 +2,10 @@ import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from './Button';
 import './Navbar.css';
-import { NewsItem } from '../types/types';
+import { ProviderItem } from '../types/types';
 
 
-function Navbar({ newsItem }: { newsItem: NewsItem[] }) {
+function Navbar({ providerItens }: { providerItens: ProviderItem[] }) {
   const [click, setClick] = useState(false);
   const [button, setButton] = useState(true);
 
@@ -43,7 +43,7 @@ function Navbar({ newsItem }: { newsItem: NewsItem[] }) {
               </Link>
             </li>
             {
-              newsItem.map((provider, index) => {
+              providerItens.map((provider, index) => {
                 return (
                   <li key={index} className='nav-item'>
                     <Link to={`/provider/${provider.id}`} className='nav-links' onClick={closeMobileMenu}>
@@ -53,13 +53,8 @@ function Navbar({ newsItem }: { newsItem: NewsItem[] }) {
                 )
               })
             }
-             <li className='nav-item'>
-              <Link to='/sign-up' className='nav-links-mobile' onClick={closeMobileMenu}>
-                Sign Up
-              </Link>
-            </li>
           </ul>
-          {button && <Button buttonStyle='btn--outline'>SIGN UP</Button>}
+          {button && <Button buttonStyle='btn--outline'>LOGOUT</Button>}
         </div>
       </nav>
     </>

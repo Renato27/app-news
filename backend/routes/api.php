@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthorController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\ProviderController;
 use App\Http\Controllers\SourceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -25,6 +26,11 @@ Route::middleware('keycloak.auth')->group(function () {
     Route::get('/news/{newsProvider}/source/{newsSourceId}', [NewsController::class, 'showBySource']);
     Route::get('/news/{newsProvider}/author/{newsAuthorId}', [NewsController::class, 'showByAuthor']);
     Route::get('/news/user', [NewsController::class, 'showByUserSetting']);
+
+    Route::prefix('provider')->group(function () {
+        Route::get('/', [ProviderController::class, 'index']);
+        Route::get('/{newsProvider}', [ProviderController::class, 'show']);
+    });
 
     Route::prefix('category')->group(function () {
         Route::get('/', [CategoryController::class, 'index']);
