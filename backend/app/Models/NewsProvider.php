@@ -12,6 +12,8 @@ class NewsProvider extends Model
 
     protected $fillable = [
         'name',
+        'webName',
+        'base64Logo'
     ];
 
     public function categories()

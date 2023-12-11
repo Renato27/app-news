@@ -19,6 +19,7 @@ class CreateNewsDataTable extends Migration
             $table->text('article_title')->nullable();
             $table->text('description')->nullable();
             $table->text('url')->nullable();
+            $table->text('image_url')->nullable();
             $table->json('result')->nullable();
             $table->foreignId('news_provider_id')->constrained('news_providers');
             $table->foreignId('news_category_id')->constrained('news_categories');

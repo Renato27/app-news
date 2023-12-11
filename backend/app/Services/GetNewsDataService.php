@@ -37,12 +37,7 @@ class GetNewsDataService implements GetNewsDataServiceInterface
 
             foreach ($response->articles as $article) {
 
-                $validateFields = $this->validateFields([
-                    $article->source->name,
-                    $article->author
-                ]);
-
-                if (!$validateFields) continue;
+                if(!isset($article->source->name) || !isset($article->author)) continue;
 
                 $categories = [
                     "category" => $category,
@@ -55,6 +50,7 @@ class GetNewsDataService implements GetNewsDataServiceInterface
                     "article_title" => $article->title,
                     "description" => $article->description,
                     "url" => $article->url,
+                    "image_url" => $article->urlToImage,
                     "result" => json_encode($article)
                 ]);
             }
@@ -99,9 +95,12 @@ class GetNewsDataService implements GetNewsDataServiceInterface
 
                 if ($article["item_type"] != "Article") continue;
 
-                $validateFields = $this->validateFields([
-                    $article["source"],
-                    $article["byline"]
+                $validateFields = $this->validateFields(
+                    $article
+                , [
+                    "byline",
+                    "source",
+                    "multimedia"
                 ]);
 
                 if (!$validateFields) continue;
@@ -116,7 +115,7 @@ class GetNewsDataService implements GetNewsDataServiceInterface
                     "published_at" => $article["published_date"],
                     "article_title" => $article["title"],
                     "description" => $article["abstract"],
-
+                    "image_url" => $article["multimedia"][0]["url"] ?? null,
                     "url" => $article["url"],
                     "result" => json_encode($article)
                 ]);
@@ -169,9 +168,12 @@ class GetNewsDataService implements GetNewsDataServiceInterface
 
                 if ($article["type"] != "article") continue;
 
-                $validateFields = $this->validateFields([
-                    $article["fields"]["byline"],
-                    $article["fields"]["publication"]
+                $validateFields = $this->validateFields(
+                    $article["fields"],
+                [
+                    "byline",
+                    "publication",
+                    "thumbnail"
                 ]);
 
                 if (!$validateFields) continue;
@@ -190,6 +192,7 @@ class GetNewsDataService implements GetNewsDataServiceInterface
                     "published_at" => $article["webPublicationDate"],
                     "article_title" => $article["webTitle"],
                     "description" => $description,
+                    "image_url" => $article["fields"]["thumbnail"],
                     "url" => $article["webUrl"],
                     "result" => json_encode($article)
                 ]);
@@ -227,12 +230,11 @@ class GetNewsDataService implements GetNewsDataServiceInterface
         $news->save();
     }
 
-    private function validateFields(array $fields): bool
+    private function validateFields(array $fields, array $fieldsArray): bool
     {
-        foreach ($fields as $field) {
-            if (!isset($field) || empty($field) || is_null($field)) {
+        foreach ($fieldsArray as $field) {
+            if(!array_key_exists($field, $fields))
                 return false;
-            }
         }
         return true;
     }
