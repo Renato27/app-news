@@ -1,25 +1,54 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import Navbar from './components/Navbar';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Home from './components/pages/Home';
+import { NewsItem } from './types/types';
+import SignUp from './components/pages/SignUp';
+import ProviderDetails from './components/pages/ProviderDetails';
+import HeaderSection from './components/HeaderSection';
+import Footer from './components/Footer';
+
+const backendUrl = process.env.REACT_APP_BACKEND_URL;
 
 function App() {
+  const [news, setNews] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(`${backendUrl}/news`);
+        const result = await response.json();
+        setNews(result);
+        setLoading(false);
+      } catch (error) {
+        console.error('Erro ao obter dados da API:', error);
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Router>
+        {loading ? (
+          <p>Carregando...</p>
+        ) : (
+          <>
+          <Navbar newsItem={news} />
+            <Routes>
+              <Route path='/' element={<Home newsItem={news} />} />
+              <Route path="/provider/:providerId" element={<ProviderDetails />} />
+              <Route path='/sign-up' element={<SignUp />} />
+            </Routes>
+          <Footer />
+          </>
+        )}
+
+      </Router>
+    </>
   );
 }
 

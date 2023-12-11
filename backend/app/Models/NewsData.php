@@ -18,6 +18,7 @@ class NewsData extends Model
         'description',
         'author',
         'url',
+        'image_url',
         'news_provider_id',
         'news_category_id',
         'news_author_id',

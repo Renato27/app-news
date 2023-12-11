@@ -16,6 +16,8 @@ class CreateNewsProvidersTable extends Migration
         Schema::create('news_providers', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('webName');
+            $table->text('base64Logo')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
