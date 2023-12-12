@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 import Navbar from './components/Navbar'
 import Home from './components/pages/Home'
-import SignUp from './components/pages/SignUp'
 import ProviderDetails from './components/pages/ProviderDetails'
 import { ProviderItem } from './types/types'
 import Footer from './components/Footer'
@@ -43,7 +42,6 @@ function AppRouter() {
         <Routes>
           <Route path='/' element={<Home />} />
           <Route path="/provider/:providerId" element={<ProviderDetails />} />
-          <Route path='/sign-up' element={<SignUp />} />
         </Routes>
         <Footer />
       </>

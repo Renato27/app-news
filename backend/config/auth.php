@@ -68,6 +68,9 @@ return [
             'driver' => 'eloquent',
             'model' => App\Models\User::class,
         ],
+        'keycloak' => [
+            'driver' => 'keycloak',
+        ],
 
 
         // 'users' => [

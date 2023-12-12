@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Auth\KeycloakUserProvider;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +14,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        // $this->app->bind(KeycloakUserProvider::class, function ($app) {
+        //     dd($app['config']['auth.providers.keycloak.model']);
+        //     return new KeycloakUserProvider(
+        //         $app['hash'],
+        //         $app['config']['auth.providers.keycloak.model']
+        //     );
+        // });
     }
 
     /**

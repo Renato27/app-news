@@ -16,3 +16,13 @@ export const keycloak = new Keycloak({
 export const keycloakProviderInitConfig = {
     onLoad: "check-sso",
 }
+
+
+export const getKeycloakInstance = () => {
+    
+    keycloak.init({
+      onLoad: 'check-sso'
+    });
+  
+    return keycloak;
+  };
