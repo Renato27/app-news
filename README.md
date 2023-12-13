@@ -1,9 +1,5 @@
 # Challenge Innoscripta
 
-## Overview
-
-Provide a brief description of your project, including its purpose and main features.
-
 ## Prerequisites
 
 Make sure you have the following software installed on your machine:
@@ -34,4 +30,6 @@ Run Setup Script
 bash run-project.sh
 ```
 
+To register a new user you need to follow the steps below
 
+![Alt text](image.png)
