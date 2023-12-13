@@ -57,6 +57,7 @@ function CardsProvider({ token, provider }: { token: string | undefined, provide
 		setNews(resultNews?.data)
 		setLinks(resultNews?.links);
 		setMeta(resultNews?.meta);
+		setUserSettingsFound(resultNews?.data[0]?.user_setting)
 	}, [resultNews])
 
 	const handleNextPage = async () => {
@@ -78,7 +79,7 @@ function CardsProvider({ token, provider }: { token: string | undefined, provide
 			setMeta(news.meta);
 		}
 	};
-
+	console.log('news', news)
 	return (
 		<div className='cards'>
 			<ArticleSearchFilter categories={categories} sources={sources} authors={authors} provider={provider} userSettingsFound={userSettingsFound} setResultNews={setResultNews} />

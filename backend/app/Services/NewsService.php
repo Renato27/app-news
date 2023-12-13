@@ -3,12 +3,25 @@
 namespace App\Services;
 
 use App\Models\NewsProvider;
+use App\Models\User;
 
 class NewsService
 {
     public function newsByProviderAndUserSettings(NewsProvider $newsProvider)
     {
-        $userSetting = $newsProvider->userSetting;
+        if(!isset(auth()->user()->token)){
+            return [];
+        }
+
+        $userAuth = auth()->user()->token;
+
+        $user = User::where('email', $userAuth->preferred_username)->first();
+
+        if (!isset($user->id)) {
+            return [];
+        }
+
+        $userSetting = $user->userSettings()->where('news_provider_id', $newsProvider->id)->first();
 
         if (!$userSetting) {
             return [];

@@ -22,6 +22,8 @@ class NewsController extends Controller
             app(UserService::class)->saveUserWithSettings($request->all(), $newsProvider->id);
         }
 
+        unset($request['saveToFeed']);
+
         $news = $newsProvider->news()->where($request->getSearchCallback())->paginate(4);
 
         return NewsResource::collection($news);

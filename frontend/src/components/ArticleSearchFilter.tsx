@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { NewsAuthor, NewsCategory, NewsSource, ProviderItem, UserSetting } from '../types/types';
 import './ArticleSearchFilter.css';
-import { filters, saveAttributesKeycloak } from '../utils/api';
+import { filters } from '../utils/api';
 import { useKeycloak } from '@react-keycloak/web';
 
 type Props = {
@@ -17,42 +17,47 @@ function ArticleSearchFilter(props: Props) {
   const { keycloak } = useKeycloak();
   const token = keycloak.token;
   const [searchTerm, setSearchTerm] = useState('');
-  const [category, setCategory] = useState(props.userSettingsFound?.news_category_id || '');
-  const [source, setSource] = useState(props.userSettingsFound?.news_source_id || '');
-  const [author, setAuthor] = useState(props.userSettingsFound?.news_author_id || '');
+  const [category, setCategory] = useState('');
+  const [source, setSource] = useState('');
+  const [author, setAuthor] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [saveToFeed, setSaveToFeed] = useState(false);
-  console.log(source)
+
+  useEffect(() => {
+    setCategory(String(props.userSettingsFound?.news_category_id));
+    setSource(String(props.userSettingsFound?.news_source_id));
+    setAuthor(String(props.userSettingsFound?.news_author_id));
+  },[props.userSettingsFound]);
+
   const handleSearch = async () => {
+
     const filtersParams = new URLSearchParams({
       searchTerm: searchTerm,
-      category: category as string,
-      source: source as string,
-      author: author as string,
+      news_category_id: category,
+      news_source_id: source,
+      news_author_id: author,
       startDate: startDate,
       endDate: endDate,
       saveToFeed: String(saveToFeed),
     });
-    
+
     const searchParams = `?${filtersParams.toString()}`;
     const providerId = String(props.provider?.id);
     const response = await filters(token, providerId, searchParams)
     props.setResultNews(response);
     
     setSearchTerm('')
-    setCategory('')
-    setSource('')
-    setAuthor('')
     setStartDate('')
-    setEndDate('') 
+    setEndDate('')
+    setSaveToFeed(false)
   };
 
   return (
     <div className='filters'>
       <label htmlFor='category' className='label'>Category:</label>
       <select id='category' className='select' value={category} onChange={(e) => setCategory(e.target.value)}>
-        {!category && <option value=''>All</option>}
+        <option value=''>All</option>
         {props.categories && props.categories.map((category, index) => (
           <option key={index} value={category.id}>
             {category.name}
@@ -62,7 +67,7 @@ function ArticleSearchFilter(props: Props) {
 
       <label htmlFor='source' className='label'>Source:</label>
       <select id='source' className='select' value={source} onChange={(e) => setSource(e.target.value)}>
-        {!source && <option value=''>All</option>}
+        <option value=''>All</option>
         {props.sources && props.sources.map((source, index) => (
           <option key={index} value={source.id}>
             {source.name}
@@ -72,7 +77,7 @@ function ArticleSearchFilter(props: Props) {
 
       <label htmlFor='author' className='label'>Author:</label>
       <select id='author' className='select' value={author} onChange={(e) => setAuthor(e.target.value)}>
-        {!author && <option value=''>All</option>}
+        <option value=''>All</option>
         {props.authors && props.authors.map((author, index) => (
           <option key={index} value={author.id}>
             {author.name}

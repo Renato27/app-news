@@ -27,13 +27,19 @@ class UserService
             ], 500);
         }
 
+        foreach ($settings as $key => $value) {
+            if($value == 'null' || $value == 'undefined'){
+                $settings[$key] = null;
+            }
+        }
+
         $user->userSettings()->updateOrCreate([
             'news_provider_id' => $providerId,
         ],[
             'news_provider_id' => $providerId,
-            'news_category_id' => $settings['category'] ?? null,
-            'news_source_id' => $settings['source'] ?? null,
-            'news_author_id' => $settings['author'] ?? null,
+            'news_category_id' => $settings['news_category_id'],
+            'news_source_id' => $settings['news_source_id'],
+            'news_author_id' => $settings['news_author_id'],
         ]);
     }
 }

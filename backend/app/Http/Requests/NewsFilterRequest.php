@@ -33,47 +33,33 @@ class NewsFilterRequest extends FormRequest
         return function($query){
 
             $searchTerm = $this->input('searchTerm');
-            $category = $this->input('category');
-            $source = $this->input('source');
-            $author = $this->input('author');
             $startDate = $this->input('startDate');
             $endDate = $this->input('endDate');
+            $search = [];
+            foreach ($this->all() as $key => $value) {
+                if($key == 'searchTerm' || $key == 'startDate' || $key == 'endDate') continue;
+
+                if(is_null($value)) continue;
+
+                if($value == 'null' || $value == 'undefined'){
+                    $this->merge([$key => null]);
+                }else{
+                    $search[$key] = $value;
+                }
+            }
+
+            if(count($search)){
+                $query->where($search);
+            }
 
             if($searchTerm){
                 $query->where('article_title', 'LIKE', '%' . $searchTerm . '%')
                 ->orWhere('description', 'LIKE', '%' . $searchTerm . '%');
             }
 
-            if($category){
-                $query->where('news_category_id', $category);
-            }
-
-            if($source){
-                $query->where('news_source_id', $source);
-            }
-
-            if($author){
-                $query->where('news_author_id', $author);
-            }
-
             if($startDate && $endDate){
                 $query->whereBetween('published_at', [$startDate, $endDate]);
             }
-
-
-
-            // foreach ($params as  $value) {
-            //     if ($value) {
-
-            //         $query->where('news_provider_id', $value)
-            //         ->orWhere('news_category_id', $value)
-            //         ->orWhere('news_author_id', $value)
-            //         ->orWhere('news_source_id', $value)
-            //         ->orWhere('published_at', 'LIKE', '%' . $value . '%')
-            //         ->orWhere('article_title', 'LIKE', '%' . $value . '%')
-            //         ->orWhere('description', 'LIKE', '%' . $value . '%');
-            //     }
-            // }
         };
     }
 }
