@@ -1,4 +1,4 @@
-import React, { Provider, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CardItem from './CardItem'
 import './CardsProvider.css'
 import { LinkNews, MetaNews, NewsAuthor, NewsCategory, NewsItemData, NewsSource, ProviderItem, ResponseNews, UserSetting } from '../types/types';

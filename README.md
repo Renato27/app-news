@@ -30,6 +30,16 @@ Run Setup Script
 bash run-project.sh
 ```
 
+### P.S.
+
+frontend server = http://localhost:3000/
+
+backend server = http://localhost:8002/api
+
+keycloak server = http://localhost:8080
+
+You need to wait few minutes to use the application, as Keycloak takes a while to start.
+
 To register a new user you need to follow the steps below
 
 ![Alt text](image.png)

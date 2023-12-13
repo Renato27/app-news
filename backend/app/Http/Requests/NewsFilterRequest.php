@@ -37,7 +37,7 @@ class NewsFilterRequest extends FormRequest
             $endDate = $this->input('endDate');
             $search = [];
             foreach ($this->all() as $key => $value) {
-                if($key == 'searchTerm' || $key == 'startDate' || $key == 'endDate') continue;
+                if($key == 'searchTerm' || $key == 'startDate' || $key == 'endDate' || $key == 'page') continue;
 
                 if(is_null($value)) continue;
 

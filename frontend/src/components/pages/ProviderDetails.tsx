@@ -5,7 +5,6 @@ import CardsProvider from '../CardsProvider';
 import HeaderSection from '../HeaderSection';
 import { getProvider } from '../../utils/api';
 import { useKeycloak } from '@react-keycloak/web';
-import './ProviderDetails.css'
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
 const backendUrlReplaced = backendUrl?.replace('/api', '');
@@ -14,13 +13,11 @@ function ProviderDetails() {
 	const { keycloak } = useKeycloak();
 	const token = keycloak.token;	
 	const { providerId } = useParams();
-	const [loading, setLoading] = useState<boolean>(true);
 	const [provider, setProvider] = useState<ProviderItem>();
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
-				setLoading(true);
 				const [providerData] =
 					await Promise.all([
 						getProvider(token, providerId),
@@ -29,9 +26,6 @@ function ProviderDetails() {
 			} catch (error) {
 				console.error('Erro ao buscar dados:', error);
 			}
-			finally {
-				setLoading(false);
-			}
 		};
 
 		fetchData();
@@ -39,13 +33,14 @@ function ProviderDetails() {
 
 	return (
 		<>
-			<HeaderSection providerImg={`${backendUrlReplaced}/${provider?.image_url}`} />
 			{provider ?
 				<>
+				<HeaderSection providerImg={`${backendUrlReplaced}/${provider?.image_url}`} />
+			
 					<CardsProvider token={token} provider={provider} />
 				</> :
-				<div className="loading-overlay">
-					<i className="loading-icon fas fa-spinner fa-spin"></i>
+				<div className='cards'>
+					<h1>Provider not found</h1>
 				</div>
 			}
 		</>

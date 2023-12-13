@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useKeycloak } from '@react-keycloak/web';
 import Home from './components/pages/Home';
 import ProviderDetails from './components/pages/ProviderDetails';
@@ -7,18 +7,18 @@ import PrivateRoute from './components/PrivateRoute';
 import Login from './components/Login';
 import Layout from './components/Layout';
 import { getProviders } from './utils/api';
-import { useAuth } from './components/AuthContext';
+import './components/Loading.css'
 
 function AppRoutes() {
-    const {token, setAuthToken} = useAuth();
+    const [token, setToken] = useState('');
     const { keycloak, initialized } = useKeycloak();
 
     useEffect(() => {
       const fetchData = async () => {
         try {
             if (initialized) {
-                const token = keycloak.token;
-                setAuthToken(token);
+                const token = keycloak.token as string;
+                setToken(token);
             }
         } catch (error) {
             console.error('Erro ao buscar dados:', error);
@@ -26,10 +26,12 @@ function AppRoutes() {
       };
   
       fetchData();
-    }, [initialized, keycloak.token, setAuthToken]);
+    }, [initialized, keycloak.token, setToken]);
 
     if (!initialized) {
-        return <div>Loading...</div>;
+        return <div className="loading-overlay">
+            <i className="loading-icon fas fa-spinner fa-spin"></i>
+        </div>
     }
 
     const routes = [
@@ -49,7 +51,6 @@ function AppRoutes() {
         },
         {
             path: "/logout",
-            // element: <Logout />,
             loader: async () => {
                 return keycloak?.logout();
              },
