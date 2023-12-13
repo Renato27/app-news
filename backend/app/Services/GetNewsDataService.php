@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
 use jcobhams\NewsApi\NewsApi;
 
@@ -221,6 +222,7 @@ class GetNewsDataService implements GetNewsDataServiceInterface
         $data["news_source_id"] = $source->id;
         $data["news_author_id"] = $author->id;
         $data["news_category_id"] = $category->id;
+        $data["published_at"] = Carbon::parse($data["published_at"])->format("Y-m-d");
 
         $json = $data["result"];
         unset($data["result"]);

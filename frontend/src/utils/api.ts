@@ -1,8 +1,9 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import axios from "axios";
-import { useAuth } from "../components/AuthContext";
+import { keycloakConfig } from "./auth";
+import { KeycloakTokenParsed } from "keycloak-js";
 
 const backendUrl = process.env.REACT_APP_BACKEND_URL;
+const keycloakUrl = process.env.REACT_APP_KEYCLOAK_URL;
 
 export const axiosRequest = (
   token: string | undefined,
@@ -12,8 +13,9 @@ export const axiosRequest = (
   params?: string,
   body?: any
 ) => {
+    const urlReplaced = url ? url + '/' : "";
   return axios.request({
-    url: `${url}/${path}${params ? params : ""}`,
+    url: `${urlReplaced}${path}${params ? params : ""}`,
     method,
     data: body,
     headers: {
@@ -107,45 +109,50 @@ export const getProvider = async (token: string | undefined, providersId: string
     }
 }
 
-// export const getAllData = async (filters = null, queryString = '') => {
+export const getNewsPerPage = async (token: string | undefined, pageUrl: string) => {
+    try {
+        const response = await axiosRequest(token, pageUrl, "GET", undefined);
 
-//   let params = "";
-//   if (filters) {
-//     const { startPeriod, endPeriod } = filters
-//     params = `?startPeriod=${startPeriod}&endPeriod=${endPeriod}`
-//   }
+        if (response) {
+          return response.data;
+        }
+      
+        return [];
+    } catch (error) {
+        console.error('Erro ao obter dados da API:', error);
+    }
+};
 
-//   const response = (await axiosRequest(`kanban/all${queryString}`, 'GET', API_URL + "/api", params));
+export const filters = async (token: string | undefined, providersId: string | undefined, params: string) => {
+    try {
+        const response = await axiosRequest(token, `news/${providersId}`, "GET", backendUrl, params);
 
-//   if (response) {
-//     return response.data
-//   }
+        if (response) {
+          return response.data;
+        }
+      
+        return [];
+    } catch (error) {
+        console.error('Erro ao obter dados da API:', error);
+    }
+}
 
-//   return [];
-// };
-
-// export const redirectLoan = (id) => {
-//   window.open(
-//     `${API_URL}/admin/loans/${id}`,
-//     '_blank'
-//   );
-// }
-
-// export const getLoanForCollumn = async (column: string, filters = null, queryString = '') => {
-//   const response = (await axiosRequest(`kanban/${column}${queryString}`, 'GET', API_URL + "/api",''));
-
-//   if (response) {
-//     return response.data
-//   }
-
-//   return [];
-// }
-// export const getLoanForCollumnById = async (column: string, filters = null, queryString = '') => {
-//   const response = (await axiosRequest(`kanban/${column}${queryString}`, 'GET', API_URL + "/api",''));
-
-//   if (response) {
-//     return response.data
-//   }
-
-//   return [];
-// }
+export const saveAttributesKeycloak = async (token: string | undefined, tokenParsed: KeycloakTokenParsed, attributes: object) => {
+    try {
+        console.log(attributes);
+        const realm = keycloakConfig.realm;
+        const id = tokenParsed.sub;
+        const body = {
+            attributes: attributes
+        }
+        const response = await axiosRequest(token, `admin/realms/${realm}/users/${id}`, "PUT", keycloakUrl, undefined, body);
+        console.log(response);
+        if (response) {
+          return response.data;
+        }
+      
+        return [];
+    } catch (error) {
+        console.error('Erro ao obter dados da API:', error);
+    }
+};

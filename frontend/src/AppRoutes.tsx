@@ -6,19 +6,18 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import PrivateRoute from './components/PrivateRoute';
 import Login from './components/Login';
 import Layout from './components/Layout';
-import Logout from './components/Logout';
 import { getProviders } from './utils/api';
 import { useAuth } from './components/AuthContext';
 
 function AppRoutes() {
     const {token, setAuthToken} = useAuth();
-    const keycloak = useKeycloak();
-    const { initialized } = keycloak;
+    const { keycloak, initialized } = useKeycloak();
+
     useEffect(() => {
       const fetchData = async () => {
         try {
             if (initialized) {
-                const token = keycloak.keycloak.token;
+                const token = keycloak.token;
                 setAuthToken(token);
             }
         } catch (error) {
@@ -27,7 +26,7 @@ function AppRoutes() {
       };
   
       fetchData();
-    }, [initialized, keycloak.keycloak.token, setAuthToken]);
+    }, [initialized, keycloak.token, setAuthToken]);
 
     if (!initialized) {
         return <div>Loading...</div>;
@@ -50,11 +49,15 @@ function AppRoutes() {
         },
         {
             path: "/logout",
-            element: <Logout />,
+            // element: <Logout />,
+            loader: async () => {
+                return keycloak?.logout();
+             },
         },
         {
             path: "/login",
             element: <Login />,
+            
         }
     ];
 

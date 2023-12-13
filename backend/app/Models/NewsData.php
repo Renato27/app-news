@@ -12,11 +12,9 @@ class NewsData extends Model
 
     protected $fillable = [
         'published_at',
-        'source',
         'article_title',
         'result',
         'description',
-        'author',
         'url',
         'image_url',
         'news_provider_id',

@@ -12,32 +12,19 @@ const backendUrlReplaced = backendUrl?.replace('/api', '');
 
 function ProviderDetails() {
 	const { keycloak } = useKeycloak();
-	const token = keycloak.token;
+	const token = keycloak.token;	
 	const { providerId } = useParams();
 	const [loading, setLoading] = useState<boolean>(true);
-	const [news, setNews] = useState<ResponseNews>();
-	const [categories, setCategories] = useState<NewsCategory[]>([]);
-	const [sources, setSources] = useState<NewsSource[]>([]);
-	const [authors, setAuthors] = useState<NewsAuthor[]>([]);
 	const [provider, setProvider] = useState<ProviderItem>();
 
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
 				setLoading(true);
-				const [newsData, categoriesData, sourcesData, authorsData, providerData] =
+				const [providerData] =
 					await Promise.all([
-						getNews(token, providerId),
-						getCategories(token, providerId),
-						getSources(token, providerId),
-						getAuthors(token, providerId),
 						getProvider(token, providerId),
 					]);
-
-				setNews(newsData);
-				setCategories(categoriesData);
-				setSources(sourcesData);
-				setAuthors(authorsData);
 				setProvider(providerData);
 			} catch (error) {
 				console.error('Erro ao buscar dados:', error);
@@ -60,9 +47,9 @@ function ProviderDetails() {
 			{!loading && (
 				<>
 					<HeaderSection providerImg={`${backendUrlReplaced}/${provider?.base64Logo}`} />
-					{news && Array.isArray(categories) && Array.isArray(sources) && Array.isArray(authors) ?
+					{provider ?
 						<>
-							<CardsProvider responseNews={news} categories={categories} sources={sources} authors={authors} />
+							<CardsProvider token={token} provider={provider} />
 						</> :
 						<div className="loading-overlay">
 							<i className="loading-icon fas fa-spinner fa-spin"></i>

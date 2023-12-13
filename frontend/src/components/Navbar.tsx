@@ -54,7 +54,7 @@ function Navbar({ providerItens }: { providerItens: ProviderItem[] }) {
               })
             }
           </ul>
-          {button && <Button buttonStyle='btn--outline'>LOGOUT</Button>}
+          {button && <Button buttonStyle='btn--outline' logout>LOGOUT</Button>}
         </div>
       </nav>
     </>

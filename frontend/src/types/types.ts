@@ -5,28 +5,32 @@ export type ProviderItem = {
 	base64Logo: string;
 }
 
+export type LinkNews = {
+    first: string;
+    last: string;
+    prev: string | null;
+    next: string | null;
+}
+
+export type MetaNews = {
+    current_page: number;
+    from: number;
+    last_page: number;
+    links: Array<{
+      url: string | null;
+      label: string;
+      active: boolean;
+    }>;
+    path: string;
+    per_page: number;
+    to: number;
+    total: number;
+}
+
 export type ResponseNews = {
     data: NewsItemData[];
-    links: {
-      first: string;
-      last: string;
-      prev: string | null;
-      next: string | null;
-    };
-    meta: {
-      current_page: number;
-      from: number;
-      last_page: number;
-      links: Array<{
-        url: string | null;
-        label: string;
-        active: boolean;
-      }>;
-      path: string;
-      per_page: number;
-      to: number;
-      total: number;
-    };
+    links: LinkNews;
+    meta: MetaNews;
 }
 
 export type NewsItemData = {

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\NewsFilterRequest;
 use App\Http\Resources\NewsResource;
 use App\Models\NewsData;
 use App\Models\NewsProvider;
+use App\Services\UserService;
 use Illuminate\Http\Request;
 
 class NewsController extends Controller
@@ -14,9 +16,13 @@ class NewsController extends Controller
         return NewsData::all();
     }
 
-    public function showByProvider(NewsProvider $newsProvider)
+    public function showByProvider(NewsProvider $newsProvider, NewsFilterRequest $request)
     {
-        $news = $newsProvider->news()->paginate(4);
+        if(filter_var($request->saveToFeed, FILTER_VALIDATE_BOOLEAN)){
+            app(UserService::class)->saveUserWithSettings($request->all());
+        }
+
+        $news = $newsProvider->news()->where($request->getSearchCallback())->paginate(4);
 
         return NewsResource::collection($news);
     }

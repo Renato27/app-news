@@ -1,40 +1,52 @@
 import React, { useEffect, useState } from 'react';
-import { NewsAuthor, NewsCategory, NewsSource } from '../types/types';
+import { NewsAuthor, NewsCategory, NewsSource, ProviderItem } from '../types/types';
 import './ArticleSearchFilter.css';
+import { filters, saveAttributesKeycloak } from '../utils/api';
+import { useKeycloak } from '@react-keycloak/web';
 
 type Props = {
   categories: NewsCategory[];
   sources: NewsSource[];
   authors: NewsAuthor[];
+  provider: ProviderItem | undefined;
+  setResultNews: any;
 };
 
 function ArticleSearchFilter(props: Props) {
+  const { keycloak } = useKeycloak();
+  const tokenParsed = keycloak.tokenParsed || {};
+  const token = keycloak.token;
   const [searchTerm, setSearchTerm] = useState('');
   const [category, setCategory] = useState('');
   const [source, setSource] = useState('');
   const [author, setAuthor] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [results, setResults] = useState([]);
+  const [saveToFeed, setSaveToFeed] = useState(false);
 
-  const handleSearch = () => {
-    const searchParams = {
-      searchTerm,
-      category,
-      source,
-      startDate,
-      endDate,
-    };
-
-    fetch(`sua-api/articles?${new URLSearchParams(searchParams)}`)
-      .then(response => response.json())
-      .then(data => setResults(data))
-      .catch(error => console.error('Erro ao buscar artigos:', error));
+  const handleSearch = async () => {
+    const filtersParams = new URLSearchParams({
+      searchTerm: searchTerm,
+      category: category,
+      source: source,
+      author: author,
+      startDate: startDate,
+      endDate: endDate,
+      saveToFeed: String(saveToFeed),
+    });
+    
+    const searchParams = `?${filtersParams.toString()}`;
+    const providerId = String(props.provider?.id);
+    const response = await filters(token, providerId, searchParams)
+    props.setResultNews(response);
+    
+    setSearchTerm('')
+    setCategory('')
+    setSource('')
+    setAuthor('')
+    setStartDate('')
+    setEndDate('') 
   };
-
-  useEffect(() => {
-    handleSearch();
-  }, [searchTerm, category, source, startDate, endDate]);
 
   return (
     <div className='filters'>
@@ -68,16 +80,32 @@ function ArticleSearchFilter(props: Props) {
         ))}
       </select>
 
+      <label className='label'>Search Term:</label>
+      <input type="text" className='input' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+
       <label className='label'>Start Date:</label>
       <input type="date" className='input' value={startDate} onChange={(e) => setStartDate(e.target.value)} />
 
       <label className='label'>End Date:</label>
       <input type="date" className='input' value={endDate} onChange={(e) => setEndDate(e.target.value)} />
 
-      <label className='label'>Search Term:</label>
-      <input type="text" className='input' value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+      <div className="button-container">
+      <div className="save-to-feed">
+          <label>
+            <input
+              type="checkbox"
+              checked={saveToFeed}
+              onChange={() => setSaveToFeed(!saveToFeed)}
+            />
+            <span className="checkbox-icon">
+              <i className={saveToFeed ? 'fas fa-check-square' : 'far fa-square'}></i>
+            </span>
+            Save to Feed
+          </label>
+        </div>
 
-      <button className='button' onClick={handleSearch}>Search</button>
+        <button className='button' onClick={handleSearch}>Search</button>
+      </div>
     </div>
   );
 }

@@ -31,7 +31,7 @@ class NewsProvider extends Model
         return $this->hasMany(NewsAuthor::class);
     }
 
-    public function settings()
+    public function userSettings()
     {
         return $this->hasMany(UserSetting::class);
     }
