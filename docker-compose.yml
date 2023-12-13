@@ -23,7 +23,7 @@ services:
     environment:
       POSTGRES_DB: ${DB_DATABASE:-laravel}
       POSTGRES_USER: ${DB_USERNAME:-laravel}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-laravel}
     ports:
       - 5432:5432
     volumes:
@@ -36,12 +36,13 @@ services:
     container_name: react
     volumes:
       - ./frontend:/react-app
-      - '/react-app/node_modules'
+      - /react-app/node_modules
     env_file:
       - ./frontend/.env
     ports:
       - "3000:3000"
     stdin_open: true
+    # tty: true
     depends_on:
       - laravel
 
@@ -59,6 +60,9 @@ services:
       DB_DATABASE: keycloak
       DB_USER: keycloak
       DB_PASSWORD: keycloak
+      KEYCLOAK_IMPORT: /config/realm-export.json
+    volumes:
+      - ./keycloak/config:/config
     ports:
       - "8080:8080"
     depends_on:

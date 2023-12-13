@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom';
-import { NewsAuthor, NewsCategory, NewsSource, ProviderItem, ResponseNews } from '../../types/types';
+import { ProviderItem } from '../../types/types';
 import CardsProvider from '../CardsProvider';
 import HeaderSection from '../HeaderSection';
-import { getAuthors, getCategories, getNews, getProvider, getSources } from '../../utils/api';
+import { getProvider } from '../../utils/api';
 import { useKeycloak } from '@react-keycloak/web';
 import './ProviderDetails.css'
 
