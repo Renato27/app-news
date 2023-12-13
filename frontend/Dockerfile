@@ -1,12 +1,10 @@
-FROM node:16.0.0-alpine3.12
+FROM node:18-alpine
 
 # RUN apk add bash
 
-USER node
-
 WORKDIR /react-app
 
-COPY package*.json ./
+COPY package.json .
 
 RUN npm install
 
