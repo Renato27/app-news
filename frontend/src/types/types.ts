@@ -1,8 +1,8 @@
 export type ProviderItem = {
 	id: number;
 	name: string;
-	webName: string;
-	base64Logo: string;
+	web_name: string;
+	image_url: string;
 }
 
 export type LinkNews = {
@@ -48,6 +48,19 @@ export type NewsItemData = {
     category: NewsCategory;
     author: NewsAuthor;
     source: NewsSource;
+    user_setting: UserSetting;
+  };
+
+  export type UserSetting = {
+    id: number;
+    user_id: number;
+    news_provider_id: number;
+    news_source_id: number;
+    news_author_id: number;
+    news_category_id: number;
+    created_at: string;
+    updated_at: string;
+    deleted_at: string | null;
   };
 
   export type NewsCategory = {

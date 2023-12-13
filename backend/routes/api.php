@@ -25,7 +25,7 @@ Route::middleware('keycloak.auth')->group(function () {
     Route::get('/news/{newsProvider}/category/{newsCategoryId}', [NewsController::class, 'showByCategory']);
     Route::get('/news/{newsProvider}/source/{newsSourceId}', [NewsController::class, 'showBySource']);
     Route::get('/news/{newsProvider}/author/{newsAuthorId}', [NewsController::class, 'showByAuthor']);
-    Route::get('/news/user', [NewsController::class, 'showByUserSetting']);
+    Route::get('/news/user/provider/{newsProvider}', [NewsController::class, 'showByUserSettingAndProvider']);
 
     Route::prefix('provider')->group(function () {
         Route::get('/', [ProviderController::class, 'index']);

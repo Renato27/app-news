@@ -6,14 +6,11 @@ handle_error() {
   exit 1
 }
 
-# Trap para chamar a função handle_error em caso de erro
 trap 'handle_error' ERR
 
-# Corrigir permissões no frontend
 echo "Corrigindo permissões no Frontend..."
 chown -R $(whoami) ./frontend
 
-# Executar npm install no frontend
 echo "Instalando dependências do Frontend..."
 (cd ./frontend && npm install)
 

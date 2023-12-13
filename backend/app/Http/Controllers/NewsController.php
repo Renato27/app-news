@@ -6,8 +6,8 @@ use App\Http\Requests\NewsFilterRequest;
 use App\Http\Resources\NewsResource;
 use App\Models\NewsData;
 use App\Models\NewsProvider;
+use App\Services\NewsService;
 use App\Services\UserService;
-use Illuminate\Http\Request;
 
 class NewsController extends Controller
 {
@@ -18,8 +18,8 @@ class NewsController extends Controller
 
     public function showByProvider(NewsProvider $newsProvider, NewsFilterRequest $request)
     {
-        if(filter_var($request->saveToFeed, FILTER_VALIDATE_BOOLEAN)){
-            app(UserService::class)->saveUserWithSettings($request->all());
+        if (filter_var($request->saveToFeed, FILTER_VALIDATE_BOOLEAN)) {
+            app(UserService::class)->saveUserWithSettings($request->all(), $newsProvider->id);
         }
 
         $news = $newsProvider->news()->where($request->getSearchCallback())->paginate(4);
@@ -48,17 +48,17 @@ class NewsController extends Controller
         return NewsResource::collection($news);
     }
 
-    public function showByUserSetting()
+    public function showByUserSettingAndProvider(NewsProvider $newsProvider)
     {
-        $user = auth()->user();
-        $userSetting = $user->userSetting;
-        $news =  NewsData::where([
-            'news_provider_id' => $userSetting->news_provider_id,
-            'news_category_id' => $userSetting->news_category_id,
-            'news_source_id' => $userSetting->news_source_id,
-            'news_author_id' => $userSetting->news_author_id,
-            ])->paginate(4);
+        try {
+            $news = app(NewsService::class)->newsByProviderAndUserSettings($newsProvider);
 
-        return NewsResource::collection($news);
+            return NewsResource::collection($news);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'message' => $th->getMessage(),
+            ], 500);
+        }
+
     }
 }

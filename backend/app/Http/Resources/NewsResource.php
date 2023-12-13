@@ -19,7 +19,7 @@ class NewsResource extends JsonResource
             'published_at' => $this->published_at,
             'article_title' => $this->article_title,
             'description' => $this->description,
-            'provider' => $this->newsProvider->webName,
+            'provider' => $this->newsProvider->web_name,
             'image_url' => $this->image_url,
             'url' => $this->url,
             'result' => json_decode($this->result, true),
@@ -29,6 +29,7 @@ class NewsResource extends JsonResource
             'category' => $this->newsCategory,
             'author' => $this->newsAuthor,
             'source' => $this->newsSource,
+            'user_setting' => $this->newsProvider->userSetting ?? null,
         ];
     }
 }

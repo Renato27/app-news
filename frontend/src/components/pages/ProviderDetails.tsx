@@ -39,24 +39,14 @@ function ProviderDetails() {
 
 	return (
 		<>
-			{loading && (
+			<HeaderSection providerImg={`${backendUrlReplaced}/${provider?.image_url}`} />
+			{provider ?
+				<>
+					<CardsProvider token={token} provider={provider} />
+				</> :
 				<div className="loading-overlay">
 					<i className="loading-icon fas fa-spinner fa-spin"></i>
 				</div>
-			)}
-			{!loading && (
-				<>
-					<HeaderSection providerImg={`${backendUrlReplaced}/${provider?.base64Logo}`} />
-					{provider ?
-						<>
-							<CardsProvider token={token} provider={provider} />
-						</> :
-						<div className="loading-overlay">
-							<i className="loading-icon fas fa-spinner fa-spin"></i>
-						</div>
-					}
-				</>
-			)
 			}
 		</>
 	)

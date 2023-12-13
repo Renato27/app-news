@@ -47,7 +47,7 @@ function Navbar({ providerItens }: { providerItens: ProviderItem[] }) {
                 return (
                   <li key={index} className='nav-item'>
                     <Link to={`/provider/${provider.id}`} className='nav-links' onClick={closeMobileMenu}>
-                      {provider.webName}
+                      {provider.web_name}
                     </Link>
                   </li>
                 )

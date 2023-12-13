@@ -42,9 +42,4 @@ class NewsData extends Model
     {
         return $this->belongsTo(NewsProvider::class);
     }
-
-    public function userSettings()
-    {
-        return $this->belongsToMany(UserSetting::class);
-    }
 }

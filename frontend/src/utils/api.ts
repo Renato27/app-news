@@ -53,6 +53,20 @@ export const getNews = async (token: string | undefined, providersId: string | u
     }
 };
 
+export const getNewsByUserSettings = async (token: string | undefined, providersId: string | undefined) => {
+    try {
+        const response = await axiosRequest(token, `news/user/provider/${providersId}`, "GET", backendUrl);
+
+        if (response) {
+          return response.data;
+        }
+      
+        return [];
+    } catch (error) {
+        console.error('Erro ao obter dados da API:', error);
+    }
+};
+
 export const getCategories = async (token: string | undefined, providersId: string | undefined) => {
     try {
         const response = await axiosRequest(token, `category/provider/${providersId}`, "GET", backendUrl);

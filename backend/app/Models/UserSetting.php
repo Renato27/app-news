@@ -42,9 +42,4 @@ class UserSetting extends Model
     {
         return $this->belongsTo(NewsCategory::class);
     }
-
-    public function newsData()
-    {
-        return $this->belongsToMany(NewsData::class);
-    }
 }

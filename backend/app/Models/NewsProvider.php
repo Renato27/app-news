@@ -13,7 +13,7 @@ class NewsProvider extends Model
     protected $fillable = [
         'name',
         'webName',
-        'base64Logo'
+        'image_url'
     ];
 
     public function categories()
@@ -31,9 +31,9 @@ class NewsProvider extends Model
         return $this->hasMany(NewsAuthor::class);
     }
 
-    public function userSettings()
+    public function userSetting()
     {
-        return $this->hasMany(UserSetting::class);
+        return $this->hasOne(UserSetting::class);
     }
 
     public function news()

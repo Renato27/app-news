@@ -16,9 +16,9 @@ function CardsHome({ providerItens }: { providerItens: ProviderItem[] }) {
                         {
                             providerItens && providerItens.map((newsItem, index) => {
                                 const backendUrlReplaced = backendUrl?.replace('/api', '');
-                                const image = newsItem?.base64Logo ? `${backendUrlReplaced}/${newsItem?.base64Logo}` : "https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg";
+                                const image = newsItem?.image_url ? `${backendUrlReplaced}/${newsItem?.image_url}` : "https://www.thermaxglobal.com/wp-content/uploads/2020/05/image-not-found.jpg";
                                 return (
-                                    <CardItem key={index} src={image} text={newsItem?.webName as string} label={newsItem?.webName as string} path={`/provider/${newsItem.id}`} blank={false}/>
+                                    <CardItem key={index} src={image} text={newsItem?.web_name as string} label={newsItem?.web_name as string} path={`/provider/${newsItem.id}`} blank={false}/>
                                 )
                             })
                         }

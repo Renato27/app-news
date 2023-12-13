@@ -13,7 +13,10 @@ class UserService
         $userToken = auth()->user()->token;
         $name = $userToken->name;
         $email = $userToken->email;
-        $user = User::create([
+        $user = User::updateOrCreate([
+            'email' => $email,
+        ],
+        [
             'name' => $name,
             'email' => $email,
         ]);
@@ -25,7 +28,7 @@ class UserService
         }
 
         $user->userSettings()->updateOrCreate([
-            'user_id' => $user->id,
+            'news_provider_id' => $providerId,
         ],[
             'news_provider_id' => $providerId,
             'news_category_id' => $settings['category'] ?? null,

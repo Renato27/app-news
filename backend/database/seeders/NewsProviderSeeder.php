@@ -21,14 +21,14 @@ class NewsProviderSeeder extends Seeder
                     'name' => 'news_api',
                 ],[
                     'name' => 'news_api',
-                    'webName' => 'News API',
+                    'web_name' => 'News API',
                     'image_url' => 'images/news-world.png',
                 ]);
                 NewsProvider::updateOrCreate([
                     'name' => 'nytimes',
                 ],[
                     'name' => 'nytimes',
-                    'webName' => 'The New York Times',
+                    'web_name' => 'The New York Times',
                     'image_url' => 'images/the-new-york-times.jpg',
                 ]);
                 NewsProvider::updateOrCreate(
@@ -36,7 +36,7 @@ class NewsProviderSeeder extends Seeder
                     'name' => 'guardianapis',
                 ],[
                     'name' => 'guardianapis',
-                    'webName' => 'The Guardian',
+                    'web_name' => 'The Guardian',
                     'image_url' => 'images/The-guardian-logo.jpg',
                 ]);
             DB::commit();
