@@ -18,8 +18,8 @@ Follow the steps below to set up and run the project.
 Clone the Repository
 
 ```bash
-git clone https://github.com/Renato27/innoscripta.git
-cd innoscripta
+git clone https://github.com/Renato27/app-news.git
+cd app-news
 ```
 
 Create a database called INNOSCRIPTA or change the Laravel .env for your settings
